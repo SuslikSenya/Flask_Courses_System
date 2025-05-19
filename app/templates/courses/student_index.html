@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Доступные курсы</h1>
+
+    <div class="list-group">
+        {% for course in courses %}
+        <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h5>{{ course.title }}</h5>
+                <small>Преподаватель: {{ course.teacher.profile.full_name }}</small>
+            </div>
+            <p class="mb-1">{{ course.description }}</p>
+            <div class="mt-2">
+                {% if course.id in enrolled_courses %}
+                    <span class="badge bg-success">Вы записаны</span>
+                    <a href="{{ url_for('courses.view', course_id=course.id) }}"
+                       class="btn btn-sm btn-outline-primary ms-2">
+                        Перейти к курсу
+                    </a>
+                {% else %}
+                    <form method="POST" action="{{ url_for('courses.enroll', course_id=course.id) }}"
+                          style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            Записаться
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Нет доступных курсов
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

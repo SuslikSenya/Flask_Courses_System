@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Course Management{% endblock %}</title>
+    <style>
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            padding: 10px 20px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+        .navbar-right {
+            float: right;
+        }
+        .user-info {
+            color: white;
+            margin-right: 15px;
+            display: inline-block;
+        }
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('courses.index') }}">Course Manager</a>
+        <div class="navbar-right">
+            {% if current_user.is_authenticated %}
+                <span class="user-info">Hello, {{ current_user.email }}</span>
+                <form action="{{ url_for('auth.logout') }}" method="post" style="display: inline;">
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.register') }}">Register</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="padding: 20px;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-{{ category }}" style="color: {% if category == 'success' %}green{% else %}red{% endif %};
+                            margin-bottom: 15px; padding: 10px; border: 1px solid {% if category == 'success' %}green{% else %}red{% endif %};">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

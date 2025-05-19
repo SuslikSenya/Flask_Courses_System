@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Мои курсы</h1>
+
+    <!-- Форма создания курса -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Создать новый курс</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('courses.create') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.title.label(class="form-label") }}
+                    {{ form.title(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.description.label(class="form-label") }}
+                    {{ form.description(class="form-control", rows=3) }}
+                </div>
+                <button type="submit" class="btn btn-primary">Создать курс</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список курсов -->
+    <div class="list-group">
+        {% for course in courses %}
+        <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h5>{{ course.title }}</h5>
+                <small>{{ course.students|length }} студентов</small>
+            </div>
+            <p class="mb-1">{{ course.description }}</p>
+            <div class="mt-2">
+                <a href="{{ url_for('courses.view', course_id=course.id) }}"
+                   class="btn btn-sm btn-outline-primary">
+                    Перейти к курсу
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            Вы пока не создали ни одного курса
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

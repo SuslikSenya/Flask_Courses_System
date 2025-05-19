@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Available Courses</h2>
+
+{% if current_user.role == 'teacher' %}
+<a href="{{ url_for('courses.create') }}" class="btn btn-primary">Create Course</a>
+{% endif %}
+
+<div class="courses-list">
+    {% for course in courses %}
+    <div class="course-card">
+        <h3>{{ course.title }}</h3>
+        <p>{{ course.description }}</p>
+        {% if current_user.role == 'student' and course not in current_user.courses_enrolled %}
+        <a href="{{ url_for('courses.enroll', course_id=course.id) }}" class="btn btn-success">Enroll</a>
+        {% endif %}
+        <a href="{{ url_for('courses.view_course', course_id=course.id) }}" class="btn btn-info">View</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+.venv/
+venv/
+
+*.pyc
+*.pyo
+*.pyd
+
+.env/
+*.env
+
+*.sqlite3
+
+.vscode/
+.idea/

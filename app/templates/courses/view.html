@@ -1,0 +1,30 @@
+<!-- В разделе материалов курса добавим кнопку для учителя -->
+{% if current_user.id == course.teacher_id %}
+    <div class="mt-4">
+        <a href="{{ url_for('courses.add_material', course_id=course.id) }}"
+           class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Добавить материал
+        </a>
+    </div>
+{% endif %}
+
+<!-- В списке материалов добавим возможность удаления -->
+{% for material in course.materials %}
+<div class="list-group-item">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <h5>{{ material.title }}</h5>
+            <pre class="mb-1">{{ material.content }}</pre>
+        </div>
+        {% if current_user.id == course.teacher_id %}
+        <form method="POST"
+              action="{{ url_for('courses.delete_material', material_id=material.id) }}"
+              onsubmit="return confirm('Удалить этот материал?')">
+            <button type="submit" class="btn btn-sm btn-danger">
+                <i class="bi bi-trash"></i>
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}

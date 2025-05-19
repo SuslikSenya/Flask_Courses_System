@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Панель администратора</h1>
+
+    <!-- Форма создания пользователя -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2>Создать пользователя</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin.create_user') }}">
+                {{ user_form.hidden_tag() }}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ user_form.full_name.label(class="form-label") }}
+                        {{ user_form.full_name(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ user_form.email.label(class="form-label") }}
+                        {{ user_form.email(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ user_form.password.label(class="form-label") }}
+                        {{ user_form.password(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ user_form.password2.label(class="form-label") }}
+                        {{ user_form.password2(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ user_form.role.label(class="form-label") }}
+                        {{ user_form.role(class="form-select") }}
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!-- Форма создания курса -->
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h2>Создать курс</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin.create_course') }}">
+            {{ course_form.hidden_tag() }}
+            <div class="row g-3">
+                <!-- Название курса -->
+                <div class="col-md-12">
+                    {{ course_form.title.label(class="form-label") }}
+                    {{ course_form.title(class="form-control") }}
+                    {% for error in course_form.title.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Описание курса -->
+                <div class="col-md-12">
+                    {{ course_form.description.label(class="form-label") }}
+                    {{ course_form.description(class="form-control", rows=4) }}
+                    {% for error in course_form.description.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <!-- Выбор преподавателя -->
+                <div class="col-md-12">
+                    {{ course_form.teacher_id.label(class="form-label") }}
+                    {{ course_form.teacher_id(class="form-select") }}
+                    {% for error in course_form.teacher_id.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                    <small class="text-muted">Если нет нужного преподавателя, создайте его сначала</small>
+                </div>
+
+                <!-- Кнопка отправки -->
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-plus-circle"></i> Создать курс
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <!-- Список пользователей -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Пользователи</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Имя</th>
+                            <th>Роль</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.profile.full_name if user.profile }}</td>
+                            <td>
+                                {% if user.role == 'teacher' %}
+                                <span class="badge bg-warning text-dark">Преподаватель</span>
+                                {% else %}
+                                <span class="badge bg-info text-dark">Студент</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                                      onsubmit="return confirm('Удалить этого пользователя?')">
+                                    <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                                </form>
+                                <a href="{{ url_for('admin.send_email', user_id=user.id) }}" class="btn btn-secondary btn-sm">
+                                    Отправить email
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Список курсов -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Courses</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Teacher</th>
+                            <th>Students</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ course.id }}</td>
+                            <td>{{ course.title }}</td>
+                            <td>{{ course.description }}</td>
+                            <td>{{ course.teacher.profile.full_name }}</td>
+                            <td>{{ course.students|length }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

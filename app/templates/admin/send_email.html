@@ -1,0 +1,16 @@
+<h2>Отправка письма пользователю {{ user.email }}</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.subject.label }}<br>
+        {{ form.subject(size=50) }}
+    </p>
+    <p>
+        {{ form.body.label }}<br>
+        {{ form.body(rows=10, cols=50) }}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+
+<p><a href="{{ url_for('admin.dashboard') }}">Назад</a></p>
